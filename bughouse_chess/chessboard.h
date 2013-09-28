@@ -37,7 +37,6 @@ public:
             field[i] = new uint[8];
             field[i][i] = i;
         }
-
         pad = 25;
     }
 
@@ -50,22 +49,20 @@ public:
         p.drawRect(0, 0, min_sz, min_sz);
 
         min_sz -= pad;
-        float d = min_sz/8.0;
-        for(float i = 0.0; i < min_sz; i += d){
+        int d = min_sz / 8;
+        for(int i = 0; i < min_sz; i += d){
             p.drawLine(i + pad, 0, i + pad, min_sz);
             p.drawLine(pad, i, min_sz + pad, i);
         }
-        p.drawLine(pad, min_sz, min_sz + pad, min_sz);
-
-
+        p.drawLine(pad, min_sz, min_sz + pad, min_sz);        
 
 
         for(int i = 0; i < 8; ++i){
             for(int j = 0; j < 8; ++j){
-                uint f = field[i][j];
-                QRect r = getRectByCoord(i, j);
-                if(i == j)
-                    p.fillRect(r, Qt::green);
+                QRect cr = getRectByCoord(i, j);
+                if( (i % 2 == 0) && (j % 2 == 0)  || (i % 2 != 0) && (j % 2 != 0)  ){
+                    p.fillRect(cr, Qt::blue);
+                }
             }
         }
     }
@@ -77,13 +74,16 @@ public:
         min_sz -= pad;
         float d = min_sz / 8.0;
         //return QRect(x * d + pad, min_sz - d - (y * d), d, d);
-        return QRect(x * d + pad + 1, min_sz - d - (y * d) + 1, d-1, d-1 );
+        return QRect(x * d + pad + 1, min_sz - d - (y * d) + 1, d - 1, d - 1);
     }
 
 
 
     int minDim(){
-        return (width() > height() ? height() : width()) - 1;
+        int dim = (width() > height() ? height() : width()) - 1;
+        dim -= pad;
+        int tmp = dim / 8.0;
+        return tmp * 8 + pad;
     }
 };
 
