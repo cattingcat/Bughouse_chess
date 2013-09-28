@@ -13,6 +13,7 @@ public:
         setMinimumHeight(300);
         setMinimumWidth(500);
         setCentralWidget(new MainWidget(this));
+        setWindowIcon(QIcon(":/img/w_king.png"));
     }
 
     ~MainWindow()

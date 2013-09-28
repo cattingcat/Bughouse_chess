@@ -44,8 +44,8 @@ public:
         QPainter p(this);
         int min_sz = minDim();
 
-        QRect r = e->rect();
-        p.drawRect(r.x(), r.y(), r.width() - 1, r.height() - 1);
+        QRect widget_rect = e->rect();
+        p.drawRect(widget_rect);
         p.drawRect(0, 0, min_sz, min_sz);
 
         min_sz -= pad;
@@ -58,13 +58,19 @@ public:
 
 
         for(int i = 0; i < 8; ++i){
+            bool flag = i % 2 == 0;
             for(int j = 0; j < 8; ++j){
                 QRect cr = getRectByCoord(i, j);
-                if( (i % 2 == 0) && (j % 2 == 0)  || (i % 2 != 0) && (j % 2 != 0)  ){
+                bool flag2 = j % 2 == 0;
+                if(flag && flag2  || (!flag) && (!flag2)){
                     p.fillRect(cr, Qt::blue);
                 }
             }
         }
+
+        QRect cell = getRectByCoord(3, 5);
+        p.drawPixmap(cell, QPixmap(":/img/w_king.png"));
+
     }
 
     QRect getRectByCoord(int x, int y){

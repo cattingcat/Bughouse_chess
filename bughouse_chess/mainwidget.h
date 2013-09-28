@@ -13,7 +13,6 @@ public:
         layout = new QHBoxLayout(this);
         layout->addWidget(new Chessboard);
         layout->addWidget(new Chessboard);
-
         setLayout(layout);
     }
 };
