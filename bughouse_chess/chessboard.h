@@ -6,6 +6,7 @@
 #include <QtGlobal>
 #include <QDebug>
 #include <QBrush>
+#include <QString>
 
 
 
@@ -28,7 +29,7 @@ public:
 private:
     uint **_field;
     uint _pad;
-    QPoint *selected_cell;
+    QPoint *_selected_cell;
 
     QColor _black_cell;
     QColor _white_cell;
@@ -38,11 +39,16 @@ public:
         _field = new uint*[8];
         for(int i = 0; i < 8; ++i){
             _field[i] = new uint[8];
-            _field[i][i] = i;
+            for(int j = 0; j < 8; ++j){
+                _field[i][j] = 0;
+            }
         }
         _pad = 25;
         _black_cell = Qt::black;
         _white_cell = Qt::white;
+
+        _field[0][1] = CHESSMAN_KING | WHITE;
+        (*this)["C6"] = CHESSMAN_KING | WHITE;
     }
 
     virtual ~Chessboard(){
@@ -75,18 +81,21 @@ protected:
             for(int j = 0; j < 8; ++j){
                 QRect cr = getRectByCoord(i, j);
                 bool flag2 = j % 2 == 0;
-                if(flag && flag2  || (!flag) && (!flag2)){
+                if((flag && flag2)  || ((!flag) && (!flag2))){
                     painter.fillRect(cr, _black_cell);
                 } else {
                     painter.fillRect(cr, _white_cell);
                 }
 
                 uint figure = _field[i][j];
+                if(figure){
+                    painter.drawPixmap(getRectByCoord(i, j), getPixmap(figure));
+                }
             }
         }
 
-        if(selected_cell){
-            QRect cell = getRectByCoord(*selected_cell);
+        if(_selected_cell){
+            QRect cell = getRectByCoord(*_selected_cell);
             painter.drawPixmap(cell, QPixmap(":/img/w_king.png"));
         }
 
@@ -101,9 +110,9 @@ protected:
         int d = (min_sz - _pad) / 8;
         int x_cell = (x - _pad) / d;
         int y_cell = 7 - (y / d);
-        if(selected_cell)
-            delete selected_cell;
-        selected_cell = new QPoint(x_cell, y_cell);
+        if(_selected_cell)
+            delete _selected_cell;
+        _selected_cell = new QPoint(x_cell, y_cell);
         repaint();
     }
 
@@ -127,16 +136,42 @@ protected:
         return tmp * 8 + _pad;
     }
 
-public:
-    static QPixmap getPixmap(uint figure_mask){
-        uint test = (CHESSMAN_HORSE | WHITE);
-        qDebug() << ((test & CHESSMAN_HORSE) == CHESSMAN_HORSE);
-        qDebug() << ((test & CHESSMAN_KING) == CHESSMAN_KING);
-        qDebug() << ((test & WHITE) == WHITE);
-        qDebug() << ((test & BLACK) == BLACK);
+#define F(x) (((figure_mask) & (x)) == (x))
+#ifdef F
+    QPixmap getPixmap(uint figure_mask){
+        QString color_str("");
+        QString figure_str("");
+        if(F(WHITE)){
+            color_str = "w";
+        } else {
+            color_str = "b";
+        }
+        if(F(CHESSMAN_PAWN)){
+            figure_str = "pawn";
+        } else if(F(CHESSMAN_ELEPHANT)){
+            figure_str = "elephant";
+        } else if(F(CHESSMAN_HORSE)){
+            figure_str = "horse";
+        } else if(F(CHESSMAN_ROOK)){
+            figure_str = "rook";
+        } else if(F(CHESSMAN_QUEEN)){
+            figure_str = "queen";
+        } else if(F(CHESSMAN_KING)){
+            figure_str = "king";
+        } else {
+            figure_str = "error";
+        }
+        return QPixmap(":/img/" + color_str + "_" + figure_str + ".png");
+    }
+#undef F
+#endif
 
-
-        return QPixmap(":/img/w_king.png");
+    uint& operator[](QString s){
+        char c = s[0].toLower().toLatin1();
+        int d = s[1].digitValue();
+        int c_index = (c - 'a') > 7 ? 7 : (c - 'a');
+        int d_index = d > 7 ? 7 : (d - 1);
+        return _field[c_index][d_index];
     }
 
 signals:
