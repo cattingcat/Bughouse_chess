@@ -7,12 +7,14 @@
 #include <QDebug>
 #include <QBrush>
 #include <QString>
+#include <QList>
 
 
 
 class Chessboard: public QWidget{
     Q_OBJECT
 public:
+    typedef QPoint Coord;
     enum ChessmanColor{
         BLACK = 64,
         WHITE = 128
@@ -29,15 +31,23 @@ public:
 private:
     uint **_field;
     uint _pad;
-    QPoint *_selected_cell;
+
+    Coord _selected_cell;
+    bool _selected;
 
     QColor _black_cell;
     QColor _white_cell;
 
     bool _locked;
 
+    uint _my_color;
+
+    QList<Coord> _draw_path;
+
 public:
-    Chessboard(QWidget* parent = 0): QWidget(parent){
+    Chessboard(ChessmanColor my_color = WHITE, QWidget* parent = 0): QWidget(parent){
+        _my_color = my_color;
+
         _field = new uint*[8];
         for(int i = 0; i < 8; ++i){
             _field[i] = new uint[8];
@@ -48,7 +58,7 @@ public:
 
         _pad = 25;
 
-        _selected_cell = 0;
+        _selected = false;
 
         _black_cell = Qt::black;
         _white_cell = Qt::white;
@@ -56,7 +66,7 @@ public:
         _locked = false;
 
         _field[0][1] = CHESSMAN_KING | WHITE;
-        (*this)["C6"] = CHESSMAN_KING | WHITE;
+        (*this)["C6"] = CHESSMAN_KING | BLACK;
     }
 
     virtual ~Chessboard(){
@@ -83,7 +93,6 @@ protected:
         }
         painter.drawLine(_pad, min_sz, min_sz + _pad, min_sz);
 
-
         for(int i = 0; i < 8; ++i){
             bool flag = i % 2 == 0;
             for(int j = 0; j < 8; ++j){
@@ -102,9 +111,17 @@ protected:
             }
         }
 
-        if(_selected_cell){
-            QRect cell = getRectByCoord(*_selected_cell);
-            painter.drawPixmap(cell, QPixmap(":/img/w_king.png"));
+        if(_selected){
+            QRect cell = getRectByCoord(_selected_cell);
+            painter.setBrush(QBrush(QColor(0, 150, 0, 120)));
+            painter.drawRect(cell);
+        }
+
+        if(!_draw_path.empty()){
+            for(QList<Coord>::Iterator it = _draw_path.begin(); it != _draw_path.end(); ++it){
+                painter.setBrush(QBrush(QColor(0, 150, 0, 120)));
+                painter.drawRect(getRectByCoord(*it));
+            }
         }
 
     }
@@ -120,13 +137,13 @@ protected:
         int d = (min_sz - _pad) / 8;
         int x_cell = (x - _pad) / d;
         int y_cell = 7 - (y / d);
-        if(_selected_cell)
-            delete _selected_cell;
-        _selected_cell = new QPoint(x_cell, y_cell);
-        repaint();
+
+        QString leter_coord('a' + x_cell);
+        QString digit_coord = QString::number(1 + y_cell);
+        emit cellClicked(leter_coord + digit_coord);
     }
 
-    QRect getRectByCoord(QPoint p){
+    QRect getRectByCoord(Coord p){
         return getRectByCoord(p.x(), p.y());
     }
 
@@ -176,20 +193,19 @@ protected:
 #undef F
 #endif
 
-    uint& operator[](QString s){
+    Coord strToCoord(QString s){
         char c = s[0].toLower().toLatin1();
         int d = s[1].digitValue();
         int c_index = (c - 'a') > 7 ? 7 : (c - 'a');
         int d_index = d > 7 ? 7 : (d - 1);
-        return _field[c_index][d_index];
+        return Coord(c_index, d_index);
     }
+
 public:
     bool lock(){
         if(_locked)
             return false;
-        if(_selected_cell)
-            delete _selected_cell;
-        _selected_cell = 0;
+        _selected = false;
         _locked = true;
         repaint();
         return true;
@@ -202,8 +218,52 @@ public:
         return true;
     }
 
+    uint& operator[](QString s){
+        Coord c = strToCoord(s);
+        return _field[c.x()][c.y()];
+    }
+
+    void addPathElement(int x, int y){
+        addPathElement(Coord(x, y));
+    }
+
+    void addPathElement(QString s){
+        addPathElement(strToCoord(s));
+    }
+
+    void addPathElement(Coord coord){
+        _draw_path.push_back(coord);
+        repaint();
+    }
+
+    void clearPath(){
+        _draw_path.clear();
+        repaint();
+    }
+
+    void selectCell(QString s){
+        selectCell(strToCoord(s));
+    }
+
+    void selectCell(int x, int y){
+        selectCell(Coord(x, y));
+    }
+
+    void selectCell(Coord coord){
+        _selected = true;
+        _selected_cell = coord;
+    }
+
+    bool selected(){
+        return _selected;
+    }
+
+    void removeSelection(){
+        _selected = false;
+    }
+
 signals:
-    void cellClicked(int x, int y);
+    void cellClicked(QString);
 
 };
 
