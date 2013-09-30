@@ -34,6 +34,8 @@ private:
     QColor _black_cell;
     QColor _white_cell;
 
+    bool _locked;
+
 public:
     Chessboard(QWidget* parent = 0): QWidget(parent){
         _field = new uint*[8];
@@ -43,9 +45,15 @@ public:
                 _field[i][j] = 0;
             }
         }
+
         _pad = 25;
+
+        _selected_cell = 0;
+
         _black_cell = Qt::black;
         _white_cell = Qt::white;
+
+        _locked = false;
 
         _field[0][1] = CHESSMAN_KING | WHITE;
         (*this)["C6"] = CHESSMAN_KING | WHITE;
@@ -102,6 +110,8 @@ protected:
     }
 
     virtual void mousePressEvent(QMouseEvent *e){
+        if(_locked)
+            return;
         int x = e->x();
         int y = e->y();
         int min_sz = minDim();
@@ -172,6 +182,24 @@ protected:
         int c_index = (c - 'a') > 7 ? 7 : (c - 'a');
         int d_index = d > 7 ? 7 : (d - 1);
         return _field[c_index][d_index];
+    }
+public:
+    bool lock(){
+        if(_locked)
+            return false;
+        if(_selected_cell)
+            delete _selected_cell;
+        _selected_cell = 0;
+        _locked = true;
+        repaint();
+        return true;
+    }
+
+    bool unlock(){
+        if(!_locked)
+            return false;
+        _locked = false;
+        return true;
     }
 
 signals:
