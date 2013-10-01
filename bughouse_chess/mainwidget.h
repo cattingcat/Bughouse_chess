@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "chessboard.h"
+#include "Chessboard/chessboardwidget.h"
 #include <QPushButton>
 #include <iostream>
 
@@ -11,16 +11,16 @@ class MainWidget: public QWidget{
     Q_OBJECT
 private:
     QVBoxLayout *_layout;
-    Chessboard* _cb1;
-    Chessboard* _cb2;
+    ChessboardWidget* _cb1;
+    ChessboardWidget* _cb2;
     QPushButton* _btn;
 
 public:
     MainWidget(QWidget* parent = 0): QWidget(parent){
         _layout = new QVBoxLayout(this);
         QHBoxLayout* cb_layout = new QHBoxLayout(this);
-        _cb1 = new Chessboard(Chessboard::WHITE, this);
-        _cb2 = new Chessboard(Chessboard::BLACK, this);
+        _cb1 = new ChessboardWidget(ChessboardWidget::WHITE, this);
+        _cb2 = new ChessboardWidget(ChessboardWidget::BLACK, this);
         _btn = new QPushButton("btn", this);
 
         this->connect(_btn, SIGNAL(clicked()), SLOT(slot()));
@@ -35,8 +35,8 @@ public:
 
 private slots:
     void slot(){
-        (*_cb1)["A1"] = Chessboard::CHESSMAN_KING | Chessboard::WHITE;
-        (*_cb1)["C6"] = Chessboard::CHESSMAN_KING | Chessboard::BLACK;
+        (*_cb1)["A1"] = ChessboardWidget::CHESSMAN_KING | ChessboardWidget::WHITE;
+        (*_cb1)["C6"] = ChessboardWidget::CHESSMAN_KING | ChessboardWidget::BLACK;
         _cb1->addPathElement("c1");
         _cb1->addPathElement("c2");
         _cb1->addPathElement("c3");

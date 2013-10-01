@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include "chessboard.h"
 
 int main(int argc, char *argv[])
 {
