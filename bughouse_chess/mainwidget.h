@@ -24,7 +24,7 @@ public:
         _btn = new QPushButton("btn", this);
 
         this->connect(_btn, SIGNAL(clicked()), SLOT(slot()));
-        this->connect(_cb1, SIGNAL(cellClicked(QString)), SLOT(cellClicked(QString)));
+        this->connect(_cb1, SIGNAL(cellClicked(StrCoord)), SLOT(cellClicked(StrCoord)));
 
         cb_layout->addWidget(_cb1);
         cb_layout->addWidget(_cb2);
@@ -43,8 +43,8 @@ private slots:
         _cb1->addPathElement("d3");
     }
 
-    void cellClicked(QString s){
-        std::cout << s.toStdString() << std::endl;
+    void cellClicked(StrCoord s){
+        std::cout << s.toString().toStdString() << std::endl;
     }
 
 };

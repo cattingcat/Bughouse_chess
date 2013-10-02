@@ -15,11 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     mainwidget.cpp \
-    Chessboard/chessboardwidget.cpp
+    Chessboard/chessboardwidget.cpp \
+    Chessboard/strcoord.cpp \
+    Chessboard/chessboardcontroller.cpp
 
 HEADERS  += mainwindow.h \
     mainwidget.h \
-    Chessboard/chessboardwidget.h
+    Chessboard/chessboardwidget.h \
+    Chessboard/strcoord.h \
+    Chessboard/chessboardcontroller.h
 
 FORMS    += mainwindow.ui
 

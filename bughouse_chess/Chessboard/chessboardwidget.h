@@ -1,5 +1,5 @@
-#ifndef CHESSBOARD_H
-#define CHESSBOARD_H
+#ifndef CHESSBOARDWIDGET_H
+#define CHESSBOARDWIDGET_H
 #include <QWidget>
 #include <QPaintEvent>
 #include <QPaintEngine>
@@ -8,6 +8,7 @@
 #include <QBrush>
 #include <QString>
 #include <QList>
+#include "strcoord.h"
 
 
 
@@ -215,9 +216,8 @@ public:
         return true;
     }
 
-    uint& operator[](QString s){
-        Coord c = strToCoord(s);
-        return _field[c.x()][c.y()];
+    uint& operator[](StrCoord s){
+        return _field[s.x()][s.y()];
     }
 
     void addPathElement(int x, int y){
@@ -238,8 +238,8 @@ public:
         repaint();
     }
 
-    void selectCell(QString s){
-        selectCell(strToCoord(s));
+    void selectCell(StrCoord s){
+        selectCell(s.toPoint());
     }
 
     void selectCell(int x, int y){
@@ -260,8 +260,8 @@ public:
     }
 
 signals:
-    void cellClicked(QString);
+    void cellClicked(StrCoord);
 
 };
 
-#endif // CHESSBOARD_H
+#endif // CHESSBOARDWIDGET_H
