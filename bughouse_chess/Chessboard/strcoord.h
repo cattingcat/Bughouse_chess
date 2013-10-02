@@ -3,89 +3,112 @@
 #include <QString>
 #include <QPoint>
 #include <QObject>
+#include <iostream>
 
 class StrCoord: public QObject {
     Q_OBJECT
 private:
-    QString _s;
+    int _x;
+    int _y;
 
-    StrCoord(int x, int y): QObject(){
-        QString leter_coord('a' + x);
-        QString digit_coord = QString::number(1 + y);
-        _s = QString(leter_coord + digit_coord);
-    }
+
+
 
     void setX(int x){
-        _s[0] = 'a' + x;
+        _x = x;
     }
 
     void setY(int y){
-        _s[1] = QString::number(1 + y)[0];
+        _y = y;
     }
 
 public:
+    StrCoord(int x, int y): QObject(){
+        _x = x;
+        _y = y;
+    }
+
     StrCoord(const StrCoord& sc): QObject(){
-        _s = sc._s;
+        this->_x = sc._x;
+        this->_y = sc._y;
     }
 
     StrCoord(const QString& s): QObject(){
-        _s = s;
+        const char* cs = s.toLower().toStdString().c_str();
+        _x = cs[0] - 'a';
+        _y = cs[1] - '1';
     }
 
     StrCoord(const char* cs): QObject(){
-        _s = QString(cs);
+        const char* s = QString(cs).toLower().toStdString().c_str();
+        _x = s[0] - 'a';
+        _y = s[1] - '1';
     }
 
     int x(){
-        char c = _s[0].toLower().toLatin1();
-        int c_index = (c - 'a') > 7 ? 7 : (c - 'a');
-        return c_index;
+        return _x;
     }
 
     int y(){
-        int d = _s[1].digitValue();
-        int d_index = d > 7 ? 7 : (d - 1);
-        return d_index;
+        return _y;
     }
 
     QPoint toPoint(){
-        return QPoint(x(), y());
+        return QPoint(_x, _y);
     }
+
+    bool hasUp(){
+        return y() < 7;
+    }
+    bool hasDown(){
+        return y() > 0;
+    }
+    bool hasLeft(){
+        return x() > 0;
+    }
+    bool hasRight(){
+        return x() < 7;
+    }
+
 
     bool up(){
         if(y() < 7){
-
+            ++_y;
+            return true;
         } else {
             return false;
         }
     }
-
     bool down(){
         if(y() > 0){
-
+            --_y;
+            return true;
         } else {
             return false;
         }
     }
-
     bool left(){
         if(x() > 0){
-
+            --_x;
+            return true;
         } else {
             return false;
         }
     }
-
     bool right(){
         if(x() < 7){
-
+            ++_x;
+            return true;
         } else {
             return false;
         }
     }
 
-    QString toString(){
-        return _s;
+    QString toString() const{
+        QString res(2, 'A');
+        res[0] = _x + 'a';
+        res[1] = _y + '1';
+        return res;
     }
 };
 

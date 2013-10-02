@@ -136,9 +136,7 @@ protected:
         int x_cell = (x - _pad) / d;
         int y_cell = 7 - (y / d);
 
-        QString leter_coord('a' + x_cell);
-        QString digit_coord = QString::number(1 + y_cell);
-        emit cellClicked(leter_coord + digit_coord);
+        emit cellClicked(StrCoord(x_cell, y_cell));
     }
 
     QRect getRectByCoord(Coord p){

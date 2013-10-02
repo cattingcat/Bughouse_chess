@@ -6,6 +6,7 @@
 #include "Chessboard/chessboardwidget.h"
 #include <QPushButton>
 #include <iostream>
+#include "Chessboard/chessboardcontroller.h"
 
 class MainWidget: public QWidget{
     Q_OBJECT
@@ -24,7 +25,8 @@ public:
         _btn = new QPushButton("btn", this);
 
         this->connect(_btn, SIGNAL(clicked()), SLOT(slot()));
-        this->connect(_cb1, SIGNAL(cellClicked(StrCoord)), SLOT(cellClicked(StrCoord)));
+
+        ChessboardController* cbc = new ChessboardController(_cb1);
 
         cb_layout->addWidget(_cb1);
         cb_layout->addWidget(_cb2);
@@ -41,10 +43,6 @@ private slots:
         _cb1->addPathElement("c2");
         _cb1->addPathElement("c3");
         _cb1->addPathElement("d3");
-    }
-
-    void cellClicked(StrCoord s){
-        std::cout << s.toString().toStdString() << std::endl;
     }
 
 };
