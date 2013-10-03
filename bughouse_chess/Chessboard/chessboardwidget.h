@@ -61,7 +61,7 @@ public:
 
         _selected = false;
 
-        _black_cell = Qt::black;
+        _black_cell = Qt::gray;
         _white_cell = Qt::white;
 
         _locked = false;
@@ -186,7 +186,7 @@ protected:
         } else {
             figure_str = "error";
         }
-        return QPixmap(":/img/" + color_str + "_" + figure_str + ".png");
+        return QPixmap(":/Chessboard/img/" + figure_str + "_" + color_str + ".png");
     }
 #undef F
 #endif

@@ -37,8 +37,8 @@ public:
 
 private slots:
     void slot(){
-        (*_cb1)["A1"] = ChessboardWidget::CHESSMAN_KING | ChessboardWidget::WHITE;
         (*_cb1)["C6"] = ChessboardWidget::CHESSMAN_KING | ChessboardWidget::BLACK;
+        _cb1->set("a1", ChessboardWidget::CHESSMAN_ELEPHANT | ChessboardWidget:: BLACK);
         _cb1->addPathElement("c1");
         _cb1->addPathElement("c2");
         _cb1->addPathElement("c3");
