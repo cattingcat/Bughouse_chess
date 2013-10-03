@@ -9,6 +9,8 @@
 #include <QString>
 #include <QList>
 #include "strcoord.h"
+#include <QPixmap>
+#include <QBitmap>
 
 
 
@@ -21,12 +23,12 @@ public:
         WHITE = 128
     };
     enum Chessman{
-        CHESSMAN_KING = 1,
-        CHESSMAN_QUEEN = 2,
-        CHESSMAN_PAWN = 4, // пешка
-        CHESSMAN_ELEPHANT = 8,
-        CHESSMAN_HORSE = 16,
-        CHESSMAN_ROOK = 32 // ладья
+        KING = 1,
+        QUEEN = 2,
+        PAWN = 4, // пешка
+        ELEPHANT = 8,
+        HORSE = 16,
+        ROOK = 32 // ладья
     };
 
 private:
@@ -171,22 +173,23 @@ protected:
         } else {
             color_str = "b";
         }
-        if(F(CHESSMAN_PAWN)){
+        if(F(PAWN)){
             figure_str = "pawn";
-        } else if(F(CHESSMAN_ELEPHANT)){
+        } else if(F(ELEPHANT)){
             figure_str = "elephant";
-        } else if(F(CHESSMAN_HORSE)){
+        } else if(F(HORSE)){
             figure_str = "horse";
-        } else if(F(CHESSMAN_ROOK)){
+        } else if(F(ROOK)){
             figure_str = "rook";
-        } else if(F(CHESSMAN_QUEEN)){
+        } else if(F(QUEEN)){
             figure_str = "queen";
-        } else if(F(CHESSMAN_KING)){
+        } else if(F(KING)){
             figure_str = "king";
         } else {
             figure_str = "error";
         }
-        return QPixmap(":/Chessboard/img/" + figure_str + "_" + color_str + ".png");
+        QPixmap res(":/Chessboard/img/" + figure_str + "_" + color_str + ".png");
+        return res;
     }
 #undef F
 #endif

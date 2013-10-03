@@ -26,7 +26,7 @@ public:
 
         this->connect(_btn, SIGNAL(clicked()), SLOT(slot()));
 
-        ChessboardController* cbc = new ChessboardController(_cb1);
+        ChessboardController* cbc = new ChessboardController(_cb1, ChessboardWidget::WHITE);
 
         cb_layout->addWidget(_cb1);
         cb_layout->addWidget(_cb2);
@@ -37,8 +37,8 @@ public:
 
 private slots:
     void slot(){
-        (*_cb1)["C6"] = ChessboardWidget::CHESSMAN_KING | ChessboardWidget::BLACK;
-        _cb1->set("a1", ChessboardWidget::CHESSMAN_ELEPHANT | ChessboardWidget:: BLACK);
+        (*_cb1)["C6"] = ChessboardWidget::KING | ChessboardWidget::BLACK;
+        _cb1->set("a1", ChessboardWidget::ELEPHANT | ChessboardWidget:: BLACK);
         _cb1->addPathElement("c1");
         _cb1->addPathElement("c2");
         _cb1->addPathElement("c3");
