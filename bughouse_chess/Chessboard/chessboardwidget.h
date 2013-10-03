@@ -101,10 +101,12 @@ protected:
                 } else {
                     painter.fillRect(cr, _white_cell);
                 }
+                painter.drawRect(cr);
 
                 uint figure = _field[i][j];
                 if(figure){
                     painter.drawPixmap(getRectByCoord(i, j), getPixmap(figure));
+                    painter.drawRect(cr);
                 }
             }
         }
@@ -136,7 +138,7 @@ protected:
         int x_cell = (x - _pad) / d;
         int y_cell = 7 - (y / d);
 
-        emit cellClicked(StrCoord(x_cell, y_cell));
+        emit cellClicked(StrCoord(x_cell, y_cell), *e);
     }
 
     QRect getRectByCoord(Coord p){
@@ -149,7 +151,7 @@ protected:
         int min_sz = minDim();
         min_sz -= _pad;
         float d = min_sz / 8.0;
-        return QRect(x * d + _pad + 1, min_sz - d - (y * d) + 1, d - 1, d - 1);
+        return QRect(x * d + _pad, min_sz - d - (y * d), d, d);
     }
 
     int minDim(){
@@ -218,6 +220,16 @@ public:
         return _field[s.x()][s.y()];
     }
 
+    uint get(StrCoord s){
+        return operator [](s);
+    }
+
+    void set(StrCoord s, uint mask){
+        operator [](s) = mask;
+        repaint();
+    }
+
+
     void addPathElement(int x, int y){
         addPathElement(Coord(x, y));
     }
@@ -257,8 +269,12 @@ public:
         _selected = false;
     }
 
+    StrCoord selectedCell(){
+        return StrCoord(_selected_cell.x(), _selected_cell.y());
+    }
+
 signals:
-    void cellClicked(StrCoord);
+    void cellClicked(StrCoord, QMouseEvent);
 
 };
 

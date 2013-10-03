@@ -6,14 +6,22 @@
 
 class ChessboardController: public QObject{
     Q_OBJECT
+    ChessboardWidget* _wdg;
+
 public:
     ChessboardController(ChessboardWidget* wdg): QObject(wdg){
-        connect(wdg, SIGNAL(cellClicked(StrCoord)), SLOT(cellClicked(StrCoord)));
+        _wdg = wdg;
+        connect(wdg, SIGNAL(cellClicked(StrCoord, QMouseEvent)), SLOT(cellClicked(StrCoord, QMouseEvent)));
     }
 
 public slots:
-    void cellClicked(const StrCoord& sc){
+    void cellClicked(const StrCoord& sc, const QMouseEvent& e){
         std::cout<<sc.toString().toStdString() << std::endl;
+        if(_wdg->get(sc) == 0)
+            _wdg->set(sc, ChessboardWidget::CHESSMAN_KING | ChessboardWidget::WHITE);
+        else
+            _wdg->set(sc,0);
+
     }
 };
 
