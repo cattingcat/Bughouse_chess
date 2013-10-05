@@ -7,12 +7,12 @@
 class ChessboardController: public QObject{
     Q_OBJECT
     ChessboardWidget* _wdg;
-    ChessboardWidget::ChessmanColor _color;
+    ChessboardWidget::ChessmanColor _my_side;
 
 public:
     ChessboardController(ChessboardWidget* wdg, ChessboardWidget::ChessmanColor color): QObject(wdg){
         _wdg = wdg;
-        _color = color;
+        _my_side = color;
         connect(wdg, SIGNAL(cellClicked(StrCoord, QMouseEvent)), SLOT(cellClicked(StrCoord, QMouseEvent)));
         initChessmans();
     }
@@ -20,17 +20,20 @@ public:
     void initChessmans(){
         StrCoord coord("a2");
         do{
-            _wdg->set(coord, _color | ChessboardWidget::PAWN);
+            _wdg->set(coord, _my_side | ChessboardWidget::PAWN);
         }while(coord.right());
     }
 
 public slots:
     void cellClicked(const StrCoord& sc, const QMouseEvent& e){
-        std::cout<<sc.toString().toStdString() << std::endl;
-        if(_wdg->get(sc) == 0)
-            _wdg->set(sc, ChessboardWidget::ELEPHANT | ChessboardWidget::BLACK);
-        else
-            _wdg->set(sc,0);
+        uint figure = _wdg->get(sc);
+        bool select = _wdg->selected();
+        if(select){
+            _wdg->set(sc, _wdg->get(_wdg->selectedCell()));
+            _wdg->removeSelected();
+        } else {
+            _wdg->setSelect(sc);
+        }
 
     }
 };

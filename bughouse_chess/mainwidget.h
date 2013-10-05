@@ -39,6 +39,7 @@ private slots:
     void slot(){
         (*_cb1)["C6"] = ChessboardWidget::KING | ChessboardWidget::BLACK;
         _cb1->set("a1", ChessboardWidget::ELEPHANT | ChessboardWidget:: BLACK);
+        _cb1->clearPath();
         _cb1->addPathElement("c1");
         _cb1->addPathElement("c2");
         _cb1->addPathElement("c3");
