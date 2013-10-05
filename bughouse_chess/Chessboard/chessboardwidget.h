@@ -87,6 +87,8 @@ protected:
 
         min_sz -= _pad;
         int d = min_sz / 8;
+
+        // draw lines
         for(int i = 0; i < min_sz; i += d){
             painter.drawLine(i + _pad, 0, i + _pad, min_sz);
             painter.drawLine(_pad, i, min_sz + _pad, i);
@@ -98,29 +100,39 @@ protected:
             for(int j = 0; j < 8; ++j){
                 QRect cr = getRectByCoord(i, j);
                 bool flag2 = j % 2 == 0;
+                // draw cells
                 if((flag && flag2)  || ((!flag) && (!flag2))){
                     painter.fillRect(cr, _black_cell);
                 } else {
                     painter.fillRect(cr, _white_cell);
                 }
+                // draw cell border
                 painter.drawRect(cr);
 
+                // draw figures
                 uint figure = _field[i][j];
                 if(figure){
                     QImage image = getImage(figure);
                     QRect rect = getRectByCoord(i, j);
                     painter.drawImage(rect, image, image.rect(), Qt::PreferDither);
-                    //painter.drawRect(cr);
                 }
             }
+
+            // draw indexes (D6 & ect)
+            QRect digitIndexCell(0, d*i, _pad, d);
+            QRect leterIndexCell(_pad + i * d, min_sz, d, _pad);
+            painter.drawText(digitIndexCell, QString('8' - i), QTextOption(Qt::AlignCenter));
+            painter.drawText(leterIndexCell, QString('A' + i), QTextOption(Qt::AlignCenter));
         }
 
+        // draw selected cell
         if(_selected){
             QRect cell = getRectByCoord(_selected_cell);
             painter.setBrush(QBrush(QColor(0, 150, 0, 120)));
             painter.drawRect(cell);
         }
 
+        // draw path
         if(!_path.empty()){
             for(QList<Coord>::Iterator it = _path.begin(); it != _path.end(); ++it){
                 painter.setBrush(QBrush(QColor(0, 150, 0, 120)));
@@ -136,7 +148,7 @@ protected:
         int x = e->x();
         int y = e->y();
         int min_sz = minDim();
-        if(x > min_sz || y > min_sz)
+        if(x < _pad || x > min_sz || y > (min_sz - _pad))
             return;
         int d = (min_sz - _pad) / 8;
         int x_cell = (x - _pad) / d;
