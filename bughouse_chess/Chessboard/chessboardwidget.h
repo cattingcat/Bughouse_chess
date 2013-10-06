@@ -128,7 +128,7 @@ protected:
         // draw selected cell
         if(_selected){
             QRect cell = getRectByCoord(_selected_cell);
-            painter.setBrush(QBrush(QColor(0, 150, 0, 120)));
+            painter.setBrush(QBrush(QColor(100, 0, 0, 120)));
             painter.drawRect(cell);
         }
 

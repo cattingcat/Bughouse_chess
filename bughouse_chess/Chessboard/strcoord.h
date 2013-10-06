@@ -110,6 +110,10 @@ public:
         res[1] = _y + '1';
         return res;
     }
+
+    operator QPoint(){
+        return toPoint();
+    }
 };
 
 #endif // STRCOORD_H
