@@ -5,18 +5,24 @@
 #include <QPaintEngine>
 #include <QtGlobal>
 #include <QDebug>
+#include <QBrush>
 
 
 class Chessboard: public QWidget{
     Q_OBJECT
 public:
+    enum ChessmanColor{
+        BLACK = 8,
+        WHITE = 16
+    };
+
     enum Chessman{
-        CHESSMAN_KING,
-        CHESSMAN_QUEEN,
-        CHESSMAN_PAWN, // пешка
-        CHESSMAN_ELEPHANT,
-        CHESSMAN_HORSE,
-        CHESSMAN_ROOK // ладья
+        CHESSMAN_KING = 0,
+        CHESSMAN_QUEEN = 1,
+        CHESSMAN_PAWN = 2, // пешка
+        CHESSMAN_ELEPHANT = 3,
+        CHESSMAN_HORSE = 4,
+        CHESSMAN_ROOK = 5 // ладья
     };
 
 private:
@@ -51,19 +57,30 @@ public:
         }
         p.drawLine(pad, min_sz, min_sz + pad, min_sz);
 
-        QRect sr = fillCell(2, 2);
-        qDebug() << "fc " << sr;
-        //p.drawEllipse(sr.x(), sr.y(), sr.width(), sr.height());
-        //p.drawEllipse(0, 0, 5, 5);
+
+
+
+        for(int i = 0; i < 8; ++i){
+            for(int j = 0; j < 8; ++j){
+                uint f = field[i][j];
+                QRect r = getRectByCoord(i, j);
+                if(i == j)
+                    p.fillRect(r, Qt::green);
+            }
+        }
     }
 
-    QRect fillCell(int x, int y){
-        QPainter p(this);
+    QRect getRectByCoord(int x, int y){
+        x = x > 7 ? 7 : x < 0 ? 0 : x;
+        y = y > 7 ? 7 : y < 0 ? 0 : y;
         int min_sz = minDim();
+        min_sz -= pad;
         float d = min_sz / 8.0;
-        float cell_sz = (min_sz - pad) / 8.0;
-        return QRect(x * d + pad, min_sz - (y * d + pad), cell_sz, cell_sz);
+        //return QRect(x * d + pad, min_sz - d - (y * d), d, d);
+        return QRect(x * d + pad + 1, min_sz - d - (y * d) + 1, d-1, d-1 );
     }
+
+
 
     int minDim(){
         return (width() > height() ? height() : width()) - 1;
